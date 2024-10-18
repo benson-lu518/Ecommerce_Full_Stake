@@ -1,0 +1,52 @@
+
+
+entity Order {
+  totalAmount BigDecimal required,
+  createdDate Instant,
+  lastModifiedDate Instant
+}
+
+entity OrderItem {
+  quantity Integer required,
+  amount BigDecimal required,
+  createdDate Instant,
+  lastModifiedDate Instant
+}
+
+entity Product {
+  productName String required,
+  category String required,
+  imageUrl String,
+  price BigDecimal required,
+  stock Integer required,
+  description String,
+  createdDate Instant,
+  lastModifiedDate Instant
+}
+
+entity Payment {
+  paymentState String required,
+  paymentMethod String required,
+  paymentDate Instant,
+}
+
+relationship ManyToOne {
+  Order{user(login)} to User with builtInEntity // One user can have many orders
+}
+
+relationship OneToMany {
+  Order{orderItem} to OrderItem{order(id)} // One order can have many order items
+}
+
+relationship ManyToOne {
+  OrderItem{product(productName)} to Product // One product can be in many order items
+}
+
+relationship OneToOne {
+  Order{payment(paymentMethod)} to Payment{order(id)} // One order can have one payment
+}
+
+paginate Order with pagination
+paginate OrderItem with pagination
+paginate Product with pagination
+paginate Payment with pagination

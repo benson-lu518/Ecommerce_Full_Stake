@@ -83,6 +83,11 @@ public class CacheConfiguration {
             createCache(cm, com.bensonlu.ecommercefullstack.domain.User.class.getName(), jcacheConfiguration);
             createCache(cm, com.bensonlu.ecommercefullstack.domain.Authority.class.getName(), jcacheConfiguration);
             createCache(cm, com.bensonlu.ecommercefullstack.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            createCache(cm, com.bensonlu.ecommercefullstack.domain.Order.class.getName(), jcacheConfiguration);
+            createCache(cm, com.bensonlu.ecommercefullstack.domain.Order.class.getName() + ".orderItems", jcacheConfiguration);
+            createCache(cm, com.bensonlu.ecommercefullstack.domain.OrderItem.class.getName(), jcacheConfiguration);
+            createCache(cm, com.bensonlu.ecommercefullstack.domain.Product.class.getName(), jcacheConfiguration);
+            createCache(cm, com.bensonlu.ecommercefullstack.domain.Payment.class.getName(), jcacheConfiguration);
             // jhipster-needle-redis-add-entry
         };
     }
