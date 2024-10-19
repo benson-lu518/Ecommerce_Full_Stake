@@ -29,6 +29,9 @@ import tech.jhipster.web.util.ResponseUtil;
 /**
  * REST controller for managing {@link com.bensonlu.ecommercefullstack.domain.Payment}.
  */
+
+// Todo: future work: add payment feature
+
 @RestController
 @RequestMapping("/api/payments")
 @Transactional
