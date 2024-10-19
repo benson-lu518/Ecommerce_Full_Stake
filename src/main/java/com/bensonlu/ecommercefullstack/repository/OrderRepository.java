@@ -17,6 +17,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     @Query("select jhiOrder from Order jhiOrder where jhiOrder.user.login = ?#{authentication.name}")
     List<Order> findByUserIsCurrentUser();
 
+    @Query(
+        "update Order o SET o.totalAmount = (SELECT SUM(oi.quantity * p.price) FROM OrderItem oi JOIN oi.product p WHERE oi.order.id = o.id) WHERE o.id = :orderId"
+    )
+    void updateOrderTotalAmount(@Param("orderId") Long orderId);
+
     default Order findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
     }

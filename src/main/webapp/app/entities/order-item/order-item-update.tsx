@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Row } from 'reactstrap';
 import { Translate, ValidatedField, ValidatedForm, isNumber, translate } from 'react-jhipster';
@@ -26,6 +26,11 @@ export const OrderItemUpdate = () => {
   const updating = useAppSelector(state => state.orderItem.updating);
   const updateSuccess = useAppSelector(state => state.orderItem.updateSuccess);
 
+  // Local state for quantity and price
+  const [quantity, setQuantity] = useState(0);
+  const [amount, setAmount] = useState(0);
+  const [selectedProductPrice, setSelectedProductPrice] = useState(0);
+
   const handleClose = () => {
     navigate(`/order-item${location.search}`);
   };
@@ -46,6 +51,11 @@ export const OrderItemUpdate = () => {
       handleClose();
     }
   }, [updateSuccess]);
+
+  // Update amount whenever quantity or product price changes
+  useEffect(() => {
+    setAmount(quantity * selectedProductPrice);
+  }, [quantity, selectedProductPrice]);
 
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
@@ -72,6 +82,13 @@ export const OrderItemUpdate = () => {
     } else {
       dispatch(updateEntity(entity));
     }
+  };
+
+  const handleProductChange = event => {
+    const selectedProductId = event.target.value;
+    const selectedProduct = products.find(product => product.id.toString() === selectedProductId);
+    setSelectedProductPrice(selectedProduct ? selectedProduct.price : 0); // Update the selected product price
+    setQuantity(0); // Reset quantity when product changes
   };
 
   const defaultValues = () =>
@@ -114,15 +131,50 @@ export const OrderItemUpdate = () => {
                 />
               ) : null}
               <ValidatedField
+                id="order-item-order"
+                name="order"
+                data-cy="order"
+                label={translate('ecommercefullstackApp.orderItem.order')}
+                type="select"
+              >
+                <option value="" key="0" />
+                {orders
+                  ? orders.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.id}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
+                id="order-item-product"
+                name="product"
+                data-cy="product"
+                label={translate('ecommercefullstackApp.orderItem.product')}
+                type="select"
+                onChange={handleProductChange}
+              >
+                <option value="" key="0" />
+                {products
+                  ? products.map(otherEntity => (
+                      <option value={otherEntity.id} key={otherEntity.id}>
+                        {otherEntity.productName}
+                      </option>
+                    ))
+                  : null}
+              </ValidatedField>
+              <ValidatedField
                 label={translate('ecommercefullstackApp.orderItem.quantity')}
                 id="order-item-quantity"
                 name="quantity"
                 data-cy="quantity"
                 type="text"
-                validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
-                }}
+                value={quantity}
+                onChange={e => setQuantity(Number(e.target.value))}
+                //                 validate={{
+                //                   required: { value: true, message: translate('entity.validation.required') },
+                //                   validate: v => isNumber(v) || translate('entity.validation.number'),
+                //                 }}
               />
               <ValidatedField
                 label={translate('ecommercefullstackApp.orderItem.amount')}
@@ -130,6 +182,8 @@ export const OrderItemUpdate = () => {
                 name="amount"
                 data-cy="amount"
                 type="text"
+                readOnly
+                value={amount}
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                   validate: v => isNumber(v) || translate('entity.validation.number'),
@@ -151,38 +205,6 @@ export const OrderItemUpdate = () => {
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
               />
-              <ValidatedField
-                id="order-item-product"
-                name="product"
-                data-cy="product"
-                label={translate('ecommercefullstackApp.orderItem.product')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {products
-                  ? products.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.productName}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
-              <ValidatedField
-                id="order-item-order"
-                name="order"
-                data-cy="order"
-                label={translate('ecommercefullstackApp.orderItem.order')}
-                type="select"
-              >
-                <option value="" key="0" />
-                {orders
-                  ? orders.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.id}
-                      </option>
-                    ))
-                  : null}
-              </ValidatedField>
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/order-item" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;

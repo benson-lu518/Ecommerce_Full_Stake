@@ -2,6 +2,7 @@ package com.bensonlu.ecommercefullstack.web.rest;
 
 import com.bensonlu.ecommercefullstack.domain.OrderItem;
 import com.bensonlu.ecommercefullstack.repository.OrderItemRepository;
+import com.bensonlu.ecommercefullstack.repository.OrderRepository;
 import com.bensonlu.ecommercefullstack.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -41,8 +42,11 @@ public class OrderItemResource {
 
     private final OrderItemRepository orderItemRepository;
 
-    public OrderItemResource(OrderItemRepository orderItemRepository) {
+    private final OrderRepository orderRepository;
+
+    public OrderItemResource(OrderItemRepository orderItemRepository, OrderRepository orderRepository) {
         this.orderItemRepository = orderItemRepository;
+        this.orderRepository = orderRepository;
     }
 
     /**
@@ -59,6 +63,12 @@ public class OrderItemResource {
             throw new BadRequestAlertException("A new orderItem cannot already have an ID", ENTITY_NAME, "idexists");
         }
         orderItem = orderItemRepository.save(orderItem);
+
+        // update order
+        Long orderId = orderItem.getOrder().getId();
+
+        orderRepository.updateOrderTotalAmount(orderId);
+
         return ResponseEntity.created(new URI("/api/order-items/" + orderItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, orderItem.getId().toString()))
             .body(orderItem);

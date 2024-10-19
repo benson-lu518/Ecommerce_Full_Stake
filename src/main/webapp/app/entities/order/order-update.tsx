@@ -111,17 +111,21 @@ export const OrderUpdate = () => {
                 />
               ) : null}
               <ValidatedField
-                //label={translate('ecommercefullstackApp.order.totalAmount')}
+                label={translate('ecommercefullstackApp.order.totalAmount')}
                 id="order-totalAmount"
                 name="totalAmount"
                 data-cy="totalAmount"
                 type="text"
                 value="0" //set the hardcoded value to 0, as it is
-                disabled // disable the field
+                readOnly // disable the field
                 //                 validate={{
                 //                   required: { value: true, message: translate('entity.validation.required') },
                 //                   validate: v => isNumber(v) || translate('entity.validation.number'),
                 //                 }}
+                validate={{
+                  required: false,
+                }}
+                number
               />
               <ValidatedField
                 label={translate('ecommercefullstackApp.order.createdDate')}
