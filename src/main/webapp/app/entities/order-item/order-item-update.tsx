@@ -51,11 +51,14 @@ export const OrderItemUpdate = () => {
       handleClose();
     }
   }, [updateSuccess]);
-
-  // Update amount whenever quantity or product price changes
   useEffect(() => {
     setAmount(quantity * selectedProductPrice);
-  }, [quantity, selectedProductPrice]);
+  }, [quantity, selectedProductPrice]); // Update amount whenever quantity or product price changes
+  //
+  //   Update amount whenever quantity or product price changes
+  //     useEffect(() => {
+  //       setAmount(quantity * selectedProductPrice);
+  //     }, [quantity, selectedProductPrice]); // Update amount whenever quantity or product price changes
 
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
@@ -152,7 +155,7 @@ export const OrderItemUpdate = () => {
                 data-cy="product"
                 label={translate('ecommercefullstackApp.orderItem.product')}
                 type="select"
-                onChange={handleProductChange}
+                onChange={handleProductChange} // Handle product change
               >
                 <option value="" key="0" />
                 {products
@@ -168,13 +171,13 @@ export const OrderItemUpdate = () => {
                 id="order-item-quantity"
                 name="quantity"
                 data-cy="quantity"
-                type="text"
+                type="number"
                 value={quantity}
                 onChange={e => setQuantity(Number(e.target.value))}
-                //                 validate={{
-                //                   required: { value: true, message: translate('entity.validation.required') },
-                //                   validate: v => isNumber(v) || translate('entity.validation.number'),
-                //                 }}
+                validate={{
+                  required: { value: true, message: translate('entity.validation.required') },
+                  validate: v => (isNumber(v) && v > 0) || translate('entity.validation.greaterThanZero'),
+                }}
               />
               <ValidatedField
                 label={translate('ecommercefullstackApp.orderItem.amount')}

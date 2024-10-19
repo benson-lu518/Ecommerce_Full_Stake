@@ -42,7 +42,7 @@ public class OrderItem implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER)
     private Product product;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JsonIgnoreProperties(value = { "payment", "orderItems", "user" }, allowSetters = true)
     private Order order;
 

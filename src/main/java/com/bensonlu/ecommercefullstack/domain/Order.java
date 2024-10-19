@@ -43,7 +43,6 @@ public class Order implements Serializable {
     private Payment payment;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "order")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(value = { "product", "order" }, allowSetters = true)
     private Set<OrderItem> orderItems = new HashSet<>();
 
