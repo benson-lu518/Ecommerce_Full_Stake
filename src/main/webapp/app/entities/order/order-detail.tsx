@@ -56,10 +56,12 @@ export const OrderDetail = () => {
           <dd>
             {orderEntity.lastModifiedDate ? <TextFormat value={orderEntity.lastModifiedDate} type="date" format={APP_DATE_FORMAT} /> : null}
           </dd>
+          {/* for further implementation}
           <dt>
             <Translate contentKey="ecommercefullstackApp.order.payment">Payment</Translate>
           </dt>
           <dd>{orderEntity.payment ? orderEntity.payment.paymentMethod : ''}</dd>
+          */}
           <dt>
             <Translate contentKey="ecommercefullstackApp.order.user">User</Translate>
           </dt>
@@ -68,7 +70,7 @@ export const OrderDetail = () => {
             <Translate contentKey="ecommercefullstackApp.order.orderItem">Order Items</Translate>
           </dt>
           <dd>
-            {orderEntity.orderItems && orderEntity.orderItems.length > 0 ? (
+            {orderItemEntities.length > 0 ? (
               <ul>
                 {orderItemEntities
                   .filter(item => item.order.id === orderEntity.id)

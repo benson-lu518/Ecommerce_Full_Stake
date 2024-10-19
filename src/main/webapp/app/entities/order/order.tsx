@@ -126,9 +126,11 @@ export const Order = () => {
                   <Translate contentKey="ecommercefullstackApp.order.lastModifiedDate">Last Modified Date</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('lastModifiedDate')} />
                 </th>
+                {/* for further implementation
                 <th>
                   <Translate contentKey="ecommercefullstackApp.order.payment">Payment</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
+                */}
                 <th>
                   <Translate contentKey="ecommercefullstackApp.order.user">User</Translate> <FontAwesomeIcon icon="sort" />
                 </th>
@@ -148,7 +150,9 @@ export const Order = () => {
                   <td>
                     {order.lastModifiedDate ? <TextFormat type="date" value={order.lastModifiedDate} format={APP_DATE_FORMAT} /> : null}
                   </td>
+                  {/* for further implementation}
                   <td>{order.payment ? <Link to={`/payment/${order.payment.id}`}>{order.payment.paymentMethod}</Link> : ''}</td>
+                  */}
                   <td>{order.user ? order.user.login : ''}</td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">

@@ -111,15 +111,17 @@ export const OrderUpdate = () => {
                 />
               ) : null}
               <ValidatedField
-                label={translate('ecommercefullstackApp.order.totalAmount')}
+                //label={translate('ecommercefullstackApp.order.totalAmount')}
                 id="order-totalAmount"
                 name="totalAmount"
                 data-cy="totalAmount"
                 type="text"
-                validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
-                  validate: v => isNumber(v) || translate('entity.validation.number'),
-                }}
+                value="0" //set the hardcoded value to 0, as it is
+                disabled // disable the field
+                //                 validate={{
+                //                   required: { value: true, message: translate('entity.validation.required') },
+                //                   validate: v => isNumber(v) || translate('entity.validation.number'),
+                //                 }}
               />
               <ValidatedField
                 label={translate('ecommercefullstackApp.order.createdDate')}
@@ -137,6 +139,7 @@ export const OrderUpdate = () => {
                 type="datetime-local"
                 placeholder="YYYY-MM-DD HH:mm"
               />
+              {/* for further implementation}
               <ValidatedField
                 id="order-payment"
                 name="payment"
@@ -144,15 +147,14 @@ export const OrderUpdate = () => {
                 label={translate('ecommercefullstackApp.order.payment')}
                 type="select"
               >
-                <option value="" key="0" />
-                {payments
-                  ? payments.map(otherEntity => (
-                      <option value={otherEntity.id} key={otherEntity.id}>
-                        {otherEntity.paymentMethod}
-                      </option>
-                    ))
-                  : null}
+                <option value="" disabled>
+                  Choose a method...
+                </option>
+                <option value="creditCard">Credit Card</option>
+                <option value="paypal">PayPal</option>
+                <option value="bankTransfer">Bank Transfer</option>
               </ValidatedField>
+              */}
               <ValidatedField
                 id="order-user"
                 name="user"
