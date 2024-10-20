@@ -5,9 +5,11 @@ import com.bensonlu.ecommercefullstack.domain.Product;
 import com.bensonlu.ecommercefullstack.repository.OrderItemRepository;
 import com.bensonlu.ecommercefullstack.repository.OrderRepository;
 import com.bensonlu.ecommercefullstack.repository.ProductRepository;
+import com.bensonlu.ecommercefullstack.service.OrderItemService;
 import com.bensonlu.ecommercefullstack.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -50,10 +52,19 @@ public class OrderItemResource {
 
     private final ProductRepository productRepository;
 
-    public OrderItemResource(OrderItemRepository orderItemRepository, OrderRepository orderRepository, ProductRepository prodctRepository) {
+    private final OrderItemService orderItemService;
+
+    // Inject the OrderItemRepository, OrderRepository, and ProductRepository
+    public OrderItemResource(
+        OrderItemRepository orderItemRepository,
+        OrderRepository orderRepository,
+        ProductRepository prodctRepository,
+        OrderItemService orderItemService
+    ) {
         this.orderItemRepository = orderItemRepository;
         this.orderRepository = orderRepository;
         this.productRepository = prodctRepository;
+        this.orderItemService = orderItemService;
     }
 
     /**
@@ -70,29 +81,34 @@ public class OrderItemResource {
         if (orderItem.getId() != null) {
             throw new BadRequestAlertException("A new orderItem cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        orderItem = orderItemRepository.save(orderItem);
 
-        // update order amount
-        Long orderId = orderItem.getOrder().getId();
-        orderRepository.updateOrderTotalAmount(orderId);
-
-        // update product stock
-        // get product id
-        Product product = productRepository.findProductByOrderItemId(orderItem.getId());
-        Integer requiredQuantity = orderItem.getQuantity();
-        // Check if product stock is sufficient
-        if (product.getStock() < requiredQuantity) {
-            LOG.warn(
-                "Insufficient stock for productID {} : required {}, available {}",
-                product.getId(),
-                requiredQuantity,
-                product.getStock()
-            );
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock for productId: " + product.getId());
-        }
-        // Deduct the stock and save
-        product.setStock(product.getStock() - requiredQuantity);
-        productRepository.save(product);
+        orderItem = orderItemService.createOrderItem(orderItem);
+        //        // Save order item
+        //        orderItem = orderItemRepository.save(orderItem);
+        //
+        //        // update order amount
+        //        Long orderId = orderItem.getOrder().getId();
+        //        BigDecimal changeAmount = orderItem.getAmount(); // amount of the order item
+        //        orderRepository.updateOrderTotalAmount(orderId,changeAmount); // add to order total amount
+        //
+        //        // update product stock
+        //        // get product id
+        //        Product product = productRepository.findProductByOrderItemId(orderItem.getId());
+        //        Integer requiredQuantity = orderItem.getQuantity();
+        //
+        //        // Check if product stock is sufficient
+        //        if (product.getStock() < requiredQuantity) {
+        //            LOG.warn(
+        //                "Insufficient stock for productID {} : required {}, available {}",
+        //                product.getId(),
+        //                requiredQuantity,
+        //                product.getStock()
+        //            );
+        //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock for productId: " + product.getId());
+        //        }
+        //        // Deduct the stock and save
+        //        product.setStock(product.getStock() - requiredQuantity);
+        //        productRepository.save(product);
 
         return ResponseEntity.created(new URI("/api/order-items/" + orderItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, orderItem.getId().toString()))
@@ -228,9 +244,13 @@ public class OrderItemResource {
      * @param id the id of the orderItem to delete.
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{id}") // Todo: need to move to service layer
     public ResponseEntity<Void> deleteOrderItem(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete OrderItem : {}", id);
+
+        orderItemService.deleteOrderItem(id);
+
+        // delete order item
         orderItemRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))

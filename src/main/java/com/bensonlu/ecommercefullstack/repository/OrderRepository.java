@@ -1,6 +1,7 @@
 package com.bensonlu.ecommercefullstack.repository;
 
 import com.bensonlu.ecommercefullstack.domain.Order;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -18,10 +19,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByUserIsCurrentUser();
 
     @Modifying
-    @Query(
-        "UPDATE Order o SET o.totalAmount = (SELECT SUM(oi.quantity * p.price) FROM OrderItem oi JOIN oi.product p WHERE oi.order.id = o.id) WHERE o.id = :orderId"
-    )
-    void updateOrderTotalAmount(@Param("orderId") Long orderId);
+    @Query("update Order jhiOrder set jhiOrder.totalAmount = jhiOrder.totalAmount + :changeAmount where jhiOrder.id = :orderId")
+    void updateOrderTotalAmount(@Param("orderId") Long orderId, @Param("changeAmount") BigDecimal changeAmount);
 
     default Order findOneWithEagerRelationships(Long id) {
         return this.findOneWithToOneRelationships(id);
