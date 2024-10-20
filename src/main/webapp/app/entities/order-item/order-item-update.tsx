@@ -51,14 +51,10 @@ export const OrderItemUpdate = () => {
       handleClose();
     }
   }, [updateSuccess]);
+
   useEffect(() => {
     setAmount(quantity * selectedProductPrice);
   }, [quantity, selectedProductPrice]); // Update amount whenever quantity or product price changes
-  //
-  //   Update amount whenever quantity or product price changes
-  //     useEffect(() => {
-  //       setAmount(quantity * selectedProductPrice);
-  //     }, [quantity, selectedProductPrice]); // Update amount whenever quantity or product price changes
 
   const saveEntity = values => {
     if (values.id !== undefined && typeof values.id !== 'number') {
@@ -92,6 +88,11 @@ export const OrderItemUpdate = () => {
     const selectedProduct = products.find(product => product.id.toString() === selectedProductId);
     setSelectedProductPrice(selectedProduct ? selectedProduct.price : 0); // Update the selected product price
     setQuantity(0); // Reset quantity when product changes
+  };
+  // Handler function to update quantity
+  const handleQuantityChange = e => {
+    const newQuantity = Number(e.target.value);
+    setQuantity(newQuantity); // Update state with the new quantity
   };
 
   const defaultValues = () =>
@@ -172,8 +173,7 @@ export const OrderItemUpdate = () => {
                 name="quantity"
                 data-cy="quantity"
                 type="number"
-                value={quantity}
-                onChange={e => setQuantity(Number(e.target.value))}
+                onChange={e => setQuantity(Number(e.target.value))} // Update quantity
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
                   validate: v => (isNumber(v) && v > 0) || translate('entity.validation.greaterThanZero'),
@@ -185,7 +185,6 @@ export const OrderItemUpdate = () => {
                 name="amount"
                 data-cy="amount"
                 type="text"
-                readOnly
                 value={amount}
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
