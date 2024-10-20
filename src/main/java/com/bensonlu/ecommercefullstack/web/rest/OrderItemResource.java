@@ -44,22 +44,11 @@ public class OrderItemResource {
 
     private final OrderItemRepository orderItemRepository;
 
-    private final OrderRepository orderRepository;
-
-    private final ProductRepository productRepository;
-
     private final OrderItemService orderItemService;
 
     // Inject the OrderItemRepository, OrderRepository, and ProductRepository
-    public OrderItemResource(
-        OrderItemRepository orderItemRepository,
-        OrderRepository orderRepository,
-        ProductRepository prodctRepository,
-        OrderItemService orderItemService
-    ) {
+    public OrderItemResource(OrderItemRepository orderItemRepository, OrderItemService orderItemService) {
         this.orderItemRepository = orderItemRepository;
-        this.orderRepository = orderRepository;
-        this.productRepository = prodctRepository;
         this.orderItemService = orderItemService;
     }
 

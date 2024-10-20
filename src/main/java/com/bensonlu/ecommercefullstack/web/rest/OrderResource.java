@@ -1,12 +1,9 @@
 package com.bensonlu.ecommercefullstack.web.rest;
 
 import com.bensonlu.ecommercefullstack.domain.Order;
-import com.bensonlu.ecommercefullstack.domain.OrderItem;
-import com.bensonlu.ecommercefullstack.domain.Product;
 import com.bensonlu.ecommercefullstack.repository.OrderItemRepository;
 import com.bensonlu.ecommercefullstack.repository.OrderRepository;
 import com.bensonlu.ecommercefullstack.repository.ProductRepository;
-import com.bensonlu.ecommercefullstack.service.OrderItemService;
 import com.bensonlu.ecommercefullstack.service.OrderService;
 import com.bensonlu.ecommercefullstack.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
@@ -49,19 +46,9 @@ public class OrderResource {
 
     private final OrderService orderService;
 
-    private final OrderItemRepository orderItemRepository;
-
-    private final ProductRepository productRepository;
-
-    public OrderResource(
-        OrderRepository orderRepository,
-        OrderItemRepository orderItemRepository,
-        ProductRepository productRepository,
-        OrderService orderService
-    ) {
+    // Inject the OrderRepository and OrderService
+    public OrderResource(OrderRepository orderRepository, OrderService orderService) {
         this.orderRepository = orderRepository;
-        this.orderItemRepository = orderItemRepository;
-        this.productRepository = productRepository;
         this.orderService = orderService;
     }
 
