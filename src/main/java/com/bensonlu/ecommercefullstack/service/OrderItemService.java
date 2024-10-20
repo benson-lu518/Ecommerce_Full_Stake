@@ -78,6 +78,10 @@ public class OrderItemService {
         // add the stock and save
         Integer requiredQuantity = orderItem.getQuantity();
         product.setStock(product.getStock() + requiredQuantity);
+
+        // delete order item
+        orderItemRepository.deleteById(id);
+
         productRepository.save(product);
     }
 }

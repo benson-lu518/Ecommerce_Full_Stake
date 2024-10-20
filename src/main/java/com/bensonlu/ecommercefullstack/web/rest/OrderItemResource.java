@@ -1,7 +1,6 @@
 package com.bensonlu.ecommercefullstack.web.rest;
 
 import com.bensonlu.ecommercefullstack.domain.OrderItem;
-import com.bensonlu.ecommercefullstack.domain.Product;
 import com.bensonlu.ecommercefullstack.repository.OrderItemRepository;
 import com.bensonlu.ecommercefullstack.repository.OrderRepository;
 import com.bensonlu.ecommercefullstack.repository.ProductRepository;
@@ -9,7 +8,6 @@ import com.bensonlu.ecommercefullstack.service.OrderItemService;
 import com.bensonlu.ecommercefullstack.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -21,11 +19,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
 import tech.jhipster.web.util.PaginationUtil;
@@ -83,32 +79,6 @@ public class OrderItemResource {
         }
 
         orderItem = orderItemService.createOrderItem(orderItem);
-        //        // Save order item
-        //        orderItem = orderItemRepository.save(orderItem);
-        //
-        //        // update order amount
-        //        Long orderId = orderItem.getOrder().getId();
-        //        BigDecimal changeAmount = orderItem.getAmount(); // amount of the order item
-        //        orderRepository.updateOrderTotalAmount(orderId,changeAmount); // add to order total amount
-        //
-        //        // update product stock
-        //        // get product id
-        //        Product product = productRepository.findProductByOrderItemId(orderItem.getId());
-        //        Integer requiredQuantity = orderItem.getQuantity();
-        //
-        //        // Check if product stock is sufficient
-        //        if (product.getStock() < requiredQuantity) {
-        //            LOG.warn(
-        //                "Insufficient stock for productID {} : required {}, available {}",
-        //                product.getId(),
-        //                requiredQuantity,
-        //                product.getStock()
-        //            );
-        //            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Insufficient stock for productId: " + product.getId());
-        //        }
-        //        // Deduct the stock and save
-        //        product.setStock(product.getStock() - requiredQuantity);
-        //        productRepository.save(product);
 
         return ResponseEntity.created(new URI("/api/order-items/" + orderItem.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, orderItem.getId().toString()))
@@ -250,8 +220,6 @@ public class OrderItemResource {
 
         orderItemService.deleteOrderItem(id);
 
-        // delete order item
-        orderItemRepository.deleteById(id);
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();

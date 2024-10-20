@@ -6,6 +6,8 @@ import com.bensonlu.ecommercefullstack.domain.Product;
 import com.bensonlu.ecommercefullstack.repository.OrderItemRepository;
 import com.bensonlu.ecommercefullstack.repository.OrderRepository;
 import com.bensonlu.ecommercefullstack.repository.ProductRepository;
+import com.bensonlu.ecommercefullstack.service.OrderItemService;
+import com.bensonlu.ecommercefullstack.service.OrderService;
 import com.bensonlu.ecommercefullstack.web.rest.errors.BadRequestAlertException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -45,14 +47,22 @@ public class OrderResource {
 
     private final OrderRepository orderRepository;
 
+    private final OrderService orderService;
+
     private final OrderItemRepository orderItemRepository;
 
     private final ProductRepository productRepository;
 
-    public OrderResource(OrderRepository orderRepository, OrderItemRepository orderItemRepository, ProductRepository productRepository) {
+    public OrderResource(
+        OrderRepository orderRepository,
+        OrderItemRepository orderItemRepository,
+        ProductRepository productRepository,
+        OrderService orderService
+    ) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.productRepository = productRepository;
+        this.orderService = orderService;
     }
 
     /**
@@ -189,12 +199,6 @@ public class OrderResource {
     public ResponseEntity<Order> getOrder(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Order : {}", id);
         Order order = orderRepository.findOneWithEagerRelationships(id);
-        //        order.setOrderItems(orderItemRepository.findAllByOrderId(id)); //get order items
-        //        for (OrderItem item : order.getOrderItems()) {
-        //            // Fetch the product using productRepository and set it on the order item
-        //            Product product = productRepository.findProductByOrderItemId(item.getId());
-        //            item.setProduct(product);
-        //        }
 
         return ResponseEntity.ok().body(order);
     }
@@ -208,7 +212,9 @@ public class OrderResource {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrder(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Order : {}", id);
-        orderRepository.deleteById(id);
+
+        orderService.deleteOrder(id);
+
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
